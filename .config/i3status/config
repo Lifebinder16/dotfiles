@@ -1,0 +1,95 @@
+general {
+        output_format = "i3bar"
+        colors = false
+        markup = pango
+        interval = 1
+        color_good = '#2f343f'
+		color_degraded = '#ebcb8b'
+		color_bad = '#ba5e57'
+}
+
+order += "memory"
+order += "cpu_usage"
+// order += "cpu_temperature 0"
+order += "disk /"
+// order += "disk /home"
+order += "ethernet enp4s0"
+// order += "wireless wlp2s0"
+order += "volume master"
+// order += "battery 1"
+order += "tztime local"
+
+load {
+        format = "<span color='#fbf1c7'>  %5min Load </span>"
+}
+
+cpu_usage {
+	// icon cpu - <b></b>
+        format = "<span color='#fbf1c7'> CPU %usage </span>"
+}
+
+memory {
+	// icon ram - <b></b>
+        format = "<span color='#fbf1c7'> RAM %used </span>"
+}
+
+cpu_temperature 0 {
+        format = "<span color='#fbf1c7'>  %degrees °C </span>"
+        path = "/sys/class/thermal/thermal_zone0/temp"
+}
+
+disk "/" {
+        format = "<span color='#fbf1c7'> <b></b> %free Free </span>"
+}
+
+disk "/home" {
+        format = "<span color='#fbf1c7'>  %free Free </span>"
+}
+
+ethernet enp4s0 {
+        format_up = "<span color='#fbf1c7'> <b></b> %ip </span>"
+        format_down = "<span color='#fbf1c7'> <b></b> Disconnected </span>"
+}
+
+wireless wlp2s0 {
+        format_up = "<span background='#b48ead'> <b></b> %essid </span>"
+        format_down = "<span background='#b48ead'> <b></b> Disconnected </span>"
+}
+
+volume master {
+        format = "<span color='#fbf1c7'> <b></b> %volume </span>"
+        format_muted = "<span color='#fbf1c7'> <b></b> Muted </span>"
+        device = "default"
+        mixer = "Master"
+        mixer_idx = 0
+}
+
+battery 1 {
+	last_full_capacity = true
+        format = "<span background='#a3be8c'>  %status %percentage </span>"
+        format_down = "No Battery"
+        status_chr = "Charging"
+        status_bat = "Battery"
+        status_unk = "Unknown"
+        status_full = "Charged"
+        path = "/sys/class/power_supply/BAT%d/uevent"
+        low_threshold = 10
+}
+
+tztime local {
+		format = "<span color='#fbf1c7'> <b></b> %time </span>"
+		format_time = "%a %-d %b %H:%M:%S"
+}
+
+// Good colors:
+//  orange (cpu) - #f59335
+//  lime (ram) - #a1d569
+//  pink (disk) - #fec7cd
+//  light-blue (eth) - #88c0d0
+//  khaki (vol) - #ebcb8b
+//  blue (time) - #81a1c1
+//
+//  Usage example: <span background='#b48ead'>  %essid </span>
+// no smoke icon - <b></b>, smoke icon - <b></b>
+
+

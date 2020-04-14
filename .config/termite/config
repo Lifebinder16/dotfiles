@@ -1,0 +1,6 @@
+[options]
+font = Mononoki Regular 10
+
+[colors]
+foreground = #b9b9a8
+background  = #1d2021

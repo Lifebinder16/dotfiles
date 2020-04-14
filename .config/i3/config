@@ -1,0 +1,327 @@
+# ====================================================================================
+#
+# > i3-конфиг
+#
+# > решение проблем:
+# >   - курсор загрузки при старте - если запускать "exec" без флага "--no-startup-id",
+# >     то i3 ожидает, что стартующее приложение вернёт код возврата, и до тех пор i3
+# >     показывает курсор загрузки. Если кода возврата не последовало в течение 60 секунд,
+# >     курсор загрузки исчезнет. Проблема в том, что не все приложения умеют возвращать
+# >     код возврата. Достаточно найти их и запускать всегда с флагом "--no-startup-id".
+# 
+# ====================================================================================
+
+
+# ====================================================================================
+# Константы
+# ====================================================================================
+
+# Установка mod-клавиш
+set $alt Mod1
+set $mod Mod4
+
+# Перемещение окон с помощью $Mod + ЛКМ
+floating_modifier $mod
+
+# Приложения по умолчанию
+set $term xfce4-terminal
+
+# ====================================================================================
+# Системные
+# ====================================================================================
+
+# Агент аутентификации polkit-gnome
+exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+
+# Композитор Picom
+exec --no-startup-id picom -b --backend glx --vsync --xrender-sync-fence --glx-no-rebind-pixmap --use-damage --glx-no-stencil --use-ewmh-active-win --refresh-rate 24
+
+# Раскладка клавиатуры
+exec_always --no-startup-id "setxkbmap -model pc104 -layout us,ru -variant ,, -option grp:alt_shift_toggle"
+
+# Перенесено в xinitrc:
+# exec_always --no-startup-id xset s off
+# exec_always --no-startup-id xset dpms 0 0 0
+
+# Разрешение экрана
+exec --no-startup-id "xrandr --output DP-0 --mode 3840x2160"
+
+# Alt + Tab
+exec --no-startup-id "alttab -font 'xft:monospace-6' -fg '#d58681' -bg '#4a4a4a' -frame '#eb564d' -t 128x150 -i 127x64"
+
+# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
+# screen before suspend. Use loginctl lock-session to lock your screen.
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
+# NetworkManager это наиболее популярный путь менеджмента беспроводных сетей в Linux,
+# nm-applet это GUI-NetworkManager, независимый от окружения.
+exec --no-startup-id nm-applet
+
+# ====================================================================================
+# Оформление
+# ====================================================================================
+
+# Шрифт для заголовков
+font pango:monospace 8
+
+# Убираем заголовки
+default_border pixel
+
+# Отступы между открытыми окнами
+gaps inner 8
+gaps outer 16
+
+# Включает умные рамки, когда открыто одно окно рамки выключаются
+# smart_borders on
+
+# Увеличение толщины рамки
+for_window [tiling] border pixel 3
+for_window [floating] border pixel 3
+
+# Убить окно нажав средней кнопкой мыши на титульный заголовок окна
+bindsym --release button2 kill
+
+# ====================================================================================
+# Системные бинды
+# ====================================================================================
+
+# Увеличение и уменьшение размеров промежутков между окнами
+bindsym $mod+s      		gaps inner current plus 5
+bindsym $mod+Shift+s    gaps inner current minus 5
+
+# Запуск терминала
+bindsym $mod+Return 		exec $term
+bindsym $mod+apostrophe	split horizontal ;; exec $term
+bindsym $mod+slash			split vertical ;; exec $term
+
+# Запуск новой задачи
+bindsym $mod+d exec rofi -show drun
+
+# Убить активное окно
+bindsym $mod+Shift+q kill
+bindsym $alt+F4 kill
+
+# Перемещение по открытым окнам
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Перемещение окон вниз-вверх-вправо-влево
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# Разделить горизонтально и вертикально
+bindsym $mod+h split h
+bindsym $mod+v split v
+
+# смена контейнера окна (стэк, табы, поменять ориентацию сплита)
+# bindsym $mod+s layout stacking
+# bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# Изменить режим: тайлинг / плавающее
+bindsym $mod+Shift+space floating toggle
+
+# Смена фокуса между тайлинговыми и плавающими окнами
+bindsym $mod+space focus mode_toggle
+
+# Полноэкранный режим приложения
+bindsym $mod+f fullscreen toggle
+
+# Ресайз
+bindsym $mod+r mode "resize"
+
+# Кнопки для режима ресайза
+mode "resize" {
+		# These bindings trigger as soon as you enter the resize mode
+
+		# Pressing left will shrink the window’s width.
+		# Pressing right will grow the window’s width.
+		# Pressing up will shrink the window’s height.
+		# Pressing down will grow the window’s height.
+		bindsym j resize shrink width 10 px or 10 ppt
+		bindsym k resize grow height 10 px or 10 ppt
+		bindsym l resize shrink height 10 px or 10 ppt
+		bindsym semicolon resize grow width 10 px or 10 ppt
+
+		# same bindings, but for the arrow keys
+		bindsym Left resize shrink width 10 px or 10 ppt
+		bindsym Down resize grow height 10 px or 10 ppt
+		bindsym Up resize shrink height 10 px or 10 ppt
+		bindsym Right resize grow width 10 px or 10 ppt
+
+		# back to normal: Enter or Escape or $mod+r
+		bindsym Return mode "default"
+		bindsym Escape mode "default"
+		bindsym $mod+r mode "default"
+}
+
+# Перечитать конфигурационный файл
+bindsym $mod+Shift+c reload
+# Рестарт i3
+bindsym $mod+Shift+r restart
+# Завершить сессию
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+# Громкость звука
+bindsym $mod+KP_Add exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym $mod+KP_Subtract exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym $mod+Shift+a    exec xfce4-terminal -e alsamixer
+
+# Use pactl to adjust volume in PulseAudio.
+set $refresh_i3status killall -SIGUSR1 i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3statusf
+
+# Скриншоты
+# bindsym Print exec gnome-screenshot -i
+bindsym Print exec --no-startup-id scrot
+bindsym $mod+Print exec  --no-startup-id gnome-screenshot -a
+
+# ====================================================================================
+# Рабочие места
+# ====================================================================================
+
+# Названия рабочих мест ("1"/"1: terms"/...)
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# Переключение между рабочими местами
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+# Перемещение окон на другие рабочие места
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# ====================================================================================
+# Бинды приложений и настройки плавающих окон
+# ====================================================================================
+
+bindsym $mod+F1		exec chromium
+bindsym $mod+F2		exec doublecmd
+bindsym $mod+F3		exec $term -e calc
+
+for_window [class="Galculator"] floating enable
+
+# ====================================================================================
+# Цвета окон
+# ====================================================================================
+
+# Awesome colors ^_^
+
+set $cl_pink #fec7cd
+set $cl_haki #87875f
+set $cl_red #fb4934
+set $cl_creme #fbf1c7
+set $cl_yellow #fabd2f
+set $cl_orange #fe801b
+set $cl_soft_green #8ec07c
+set $cl_soft_blue #7ca598
+
+# Выбранные цвета текущей схемы
+
+set $cl_accent #8ec07c
+set $cl_inactive_ws #2f343f
+set $cl_inactive_ws_text #fbf1c7
+
+# Цвета границы, фона, текста, индикатора, и дочерней границы (child_border)
+
+client.focused              $cl_accent #2f343f #d8dee8 $cl_accent $cl_accent
+client.focused_inactive     #2f343f #2f343f #d8dee8 #2f343f #181818
+client.unfocused            #2f343f #2f343f #d8dee8 #2f343f #181818
+client.urgent               #2f343f #2f343f #d8dee8 #2f343f #2f343f
+client.placeholder          #2f343f #2f343f #d8dee8 #2f343f #2f343f
+client.background           #2f343f
+
+# ====================================================================================
+# Панель
+# ====================================================================================
+
+bar {
+ 
+ 	font pango:Mononoki Regular 11
+ 	workspace_min_width 24
+ 
+  colors {
+		background #222222
+		statusline #2f343f
+		separator $cl_accent
+
+		# цвета границы, фона и текста
+		focused_workspace       $cl_accent $cl_accent #222222
+		active_workspace        $cl_accent $cl_accent $cl_accent
+		inactive_workspace      $cl_inactive_ws $cl_inactive_ws $cl_inactive_ws_text
+		urgent_workspacei       $cl_inactive_ws #ebcb8b $cl_inactive_ws
+  }
+
+  status_command i3status
+	# status_command $HOME/.config/i3status/script.sh
+  # status_command polybar main -c $HOME/.config/polybar/config.ini
+}
+
+# ~~~~~~~~~~ /dev/null ~~~~~~~~~~
+#        Чтобы не потерять
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Открытие программ в плавающем окне
+# for_window [class="[.]*"] floating enable
+# for_window [class="nitrogen"] floating disable
+# for_window [class="Termite"] floating disable
+# for_window [class="Chromium"] floating disable
+
+# Привязка окон к конкретным рабочим столам
+# bindsym $mod+F2 exec chromium; workspace $ws2
+
+# There also is the (new) i3-dmenu-desktop which only displays applications
+# shipping a .desktop file. It is a wrapper around dmenu, so you need that
+# installed.
+# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+
+# change focus
+# bindsym $mod+j focus left
+# bindsym $mod+k focus down
+# bindsym $mod+l focus up
+# bindsym $mod+semicolon focus right
+
+# move focused window
+# bindsym $mod+Shift+j move left
+# bindsym $mod+Shift+k move down
+# bindsym $mod+Shift+l move up
+# bindsym $mod+Shift+colon move right
+
+# focus the parent container
+# bindsym $mod+a focus parent
+
+# focus the child container
+# bindsym $mod+d focus child
+
